@@ -13,7 +13,7 @@ df.columns = (
     df.columns
         .str.strip()
         .str.lower()
-        .str.replace('%', 'pct')
+        .str.replace('%', 'pct ')
         .str.replace(' ', '_')
         .str.replace('anaemic', 'anemic') # changes to American spelling
 )
@@ -24,6 +24,8 @@ if "number" in df.columns:
     df["number"] = pd.to_numeric(df["number"], errors="coerce") # converts non-numeric rows to NaN
     df = df.dropna(subset=["number"])# drops rows where number is NaN
     df["number"] = df["number"].astype(int) # converts all to int
+    
+df["number"] = df["number"].astype(int) # converts to type int
     
 # column 2 (sex)
 if "sex" in df.columns:
@@ -36,7 +38,7 @@ if "sex" in df.columns:
     df["sex"] = df["sex"].replace({"M": "Male", "F": "Female"}) # converts "M" to "Male" and "F" to "Female"
     
 # columns 3-5 (pixel values)
-for col in ["pctred_pixel", "pctgreen_pixel", "pctblue_pixel"]:
+for col in ["pct_red_pixel", "pct_green_pixel", "pct_blue_pixel"]:
     df[col] = pd.to_numeric(df[col], errors="coerce") # converts non-numeric rows to NaN
     df = df[df[col].between(0, 100)] # removes rows with invalid percentage value
     
@@ -45,18 +47,20 @@ df["hb"] = pd.to_numeric(df["hb"], errors="coerce") # converts non-numeric rows 
 df = df[df["hb"].between(1, 25)] # removes rows outside of valid range
 
 # column 7 (anemic)
-df["anemic"] = (
-    df["anemic"]
-        .astype(str)
-        .str.lower()
-        .replace({"yes": 1, "no": 0, "true": 1, "false": 0}) # converts str labels to 0 (non-anemic) and 1 (anemic)
-)
-
-df["anemic"] = pd.to_numeric(df["anemic"], errors="coerce").fillna(0).astype(int)
+if "anemic" in df.columns:
+    df["anemic"] = (
+        df["anemic"]
+           .astype(str)
+           .str.lower()
+          .replace({"yes": 1, "no": 0, "true": 1, "false": 0}) # converts str labels to 0 (non-anemic) and 1 (anemic))   
+    )
+    df["anemic"] = pd.to_numeric(df["anemic"], errors="coerce").fillna(0).astype(int) # converts to numeric, replaces non-numeric 
+                                                                                    # with NaN, replaces NaN with 0, converts to int
 
 # QC
 print("Final shape:", df.shape)
 print(df.head())
+print(df.dtypes)
 
 # writing processed csv
 df.to_csv(PROCESSED_PATH, index=False)
