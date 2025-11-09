@@ -39,8 +39,14 @@ if "sex" in df.columns:
     
 # columns 3-5 (pixel values)
 for col in ["pct_red_pixel", "pct_green_pixel", "pct_blue_pixel"]:
-    df[col] = pd.to_numeric(df[col], errors="coerce") # converts non-numeric rows to NaN
-    df = df[df[col].between(0, 100)] # removes rows with invalid percentage value
+    df[col] = (
+        df[col]
+        .astype(str) # converts all to string
+        .str.strip() # strips whitespace
+    )
+    df[col] = pd.to_numeric(df[col], errors="coerce") # safely converts back to numeric
+    df = df[df[col].between(0, 100)] # keeps valid percentages
+    df[col] = df[col].astype(float) # converts to float
     
 # column 6 (hb)
 df["hb"] = pd.to_numeric(df["hb"], errors="coerce") # converts non-numeric rows to NaN
