@@ -23,6 +23,7 @@ These pixel percentages serve as simple quantitative descriptors of skin colorat
 
 ## Repository Structure
 
+```
 data/
 ├──features.csv
 ├──processed.csv
@@ -37,6 +38,7 @@ src/
 ├──features.py
 ├──ingest.py
 └──validate.py
+```
 
 ## Workflow
 
